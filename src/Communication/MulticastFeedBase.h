@@ -286,6 +286,13 @@ namespace QuickFAST
           ++rejectedPackets_;
           accepted = 0;
         }
+        // Tag the buffer with this feed's name_ ("A" / "B") so the host can
+        // identify which redundant feed delivered the packet after A/B merge.
+        // Pointer to name_ is safe: the feed outlives every buffer it tags.
+        if(!error && accepted > 0)
+        {
+          buffer->setExtra(&name_);
+        }
         host_.feedReceived(error, buffer, accepted);
         if(host_.feedStopping())
         {
